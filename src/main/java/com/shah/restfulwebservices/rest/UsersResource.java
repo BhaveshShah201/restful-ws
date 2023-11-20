@@ -2,8 +2,11 @@ package com.shah.restfulwebservices.rest;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +26,16 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api")
 public class UsersResource {
+	
+	private static final String GOODMORNING = "good.morning.message";
+	private static final String DEFAULTGOODMORNING = "Good Morning";
 
 	private UserService userService;
+	private MessageSource messageSource;
 
-	public UsersResource(UserService userService) {
+	public UsersResource(UserService userService, MessageSource messageSource) {
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	@GetMapping("/findAll")
@@ -57,6 +65,12 @@ public class UsersResource {
 	@DeleteMapping("/delete/{id}")
 	public void deleteUser(@PathVariable int id) {
 		userService.deleteUser(id);
+	}
+
+	@GetMapping("/internationalize")
+	public String international() {
+		Locale local = LocaleContextHolder.getLocale();
+		return messageSource.getMessage(GOODMORNING, null, DEFAULTGOODMORNING, local);
 	}
 
 }
