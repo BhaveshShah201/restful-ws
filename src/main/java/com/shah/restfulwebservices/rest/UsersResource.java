@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.shah.restfulwebservices.exception.UserNotFoundException;
+import com.shah.restfulwebservices.model.Post;
 import com.shah.restfulwebservices.model.User;
 import com.shah.restfulwebservices.service.UserService;
 
@@ -26,7 +27,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api")
 public class UsersResource {
-	
+
 	private static final String GOODMORNING = "good.morning.message";
 	private static final String DEFAULTGOODMORNING = "Good Morning";
 
@@ -60,6 +61,15 @@ public class UsersResource {
 		}
 
 		return user;
+	}
+
+	@GetMapping("/users/{id}/posts")
+	public List<Post> findPosts(@PathVariable int id) {
+		User user = userService.findOne(id);
+		if (Objects.isNull(user)) {
+			throw new UserNotFoundException("id:" + id);
+		}
+		return user.getPosts();
 	}
 
 	@DeleteMapping("/delete/{id}")
